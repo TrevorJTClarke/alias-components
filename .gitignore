@@ -1,0 +1,9 @@
+.idea
+.cache
+*.DS_Store
+docs/dist
+docs/search.json
+dist
+examples
+node_modules
+src/react

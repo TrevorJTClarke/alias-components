@@ -2,8 +2,8 @@ import { html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { emit } from '../../internal/event';
 import { watch } from '../../internal/watch';
-import styles from './include.styles';
-import { requestInclude } from './request';
+import styles from './rpc-querier.styles';
+// import { requestInclude } from './request';
 
 /**
  * @since 2.0
@@ -12,8 +12,8 @@ import { requestInclude } from './request';
  * @event sl-load - Emitted when the included file is loaded.
  * @event {{ status: number }} sl-error - Emitted when the included file fails to load due to an error.
  */
-@customElement('sl-include')
-export default class SlInclude extends LitElement {
+@customElement('al-querier')
+export default class AlQuerier extends LitElement {
   static styles = styles;
 
   /**
@@ -75,6 +75,6 @@ export default class SlInclude extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'sl-include': SlInclude;
+    'al-querier': AlQuerier;
   }
 }

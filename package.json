@@ -40,6 +40,7 @@
     "node": ">=14.17.0"
   },
   "dependencies": {
+    "@cosmjs/encoding": "^0.28.4",
     "@floating-ui/dom": "^0.3.1",
     "@lit-labs/react": "^1.0.2",
     "@shoelace-style/animations": "^1.1.0",

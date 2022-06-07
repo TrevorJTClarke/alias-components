@@ -28,7 +28,7 @@ To use an image for the avatar, set the `image` and `label` attributes. This wil
   label="Avatar generated from a cosmos address"
 ></al-avatar>
 <al-avatar
-  address="juno17agn300hg4cve6rf32m5v7x93w5uhksmtqcqnu"
+  address="juno1qlmwjkg7uu4awajw5aunctjdce9q657j0rrdpy"
   label="Avatar generated from a juno address"
 ></al-avatar>
 ```
@@ -42,7 +42,7 @@ const App = () => (
     label="Avatar generated from a cosmos address"
   />
   <AlAvatar
-    address="juno17agn300hg4cve6rf32m5v7x93w5uhksmtqcqnu"
+    address="juno1qlmwjkg7uu4awajw5aunctjdce9q657j0rrdpy"
     label="Avatar generated from a juno address"
   />
 );

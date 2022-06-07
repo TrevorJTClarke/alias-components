@@ -39,7 +39,7 @@ export default class AlQuerier extends LitElement {
   // creates window "__RPC" instance that makes easy querier
   private async loadSmartRpc() {
     if (!window.__RPC) window.__RPC = {}
-    function query(address: string, queryMsg: Record<string, unknown>): Promise<any> {
+    async function query(address: string, queryMsg: Record<string, unknown>): Promise<any> {
       // based on loaded configs, check which network matches address prefix
       const configPrefixes = window.__RPC_CONFIGS ? Object.keys(window.__RPC_CONFIGS) : []
       let network = configPrefixes[0]
@@ -47,6 +47,16 @@ export default class AlQuerier extends LitElement {
         // we found a matching network!
         if (address.search(k) > -1) network = k
       })
+
+      function timeout(ms: number) {
+        return new Promise(resolve => setTimeout(resolve, ms))
+      }
+
+      let i = 0
+      while (!window.__RPC_CONNECTIONS[network] && i < 100) {
+        await timeout(60)
+        i++
+      }
 
       return window.__RPC_CONNECTIONS[network].queryContractSmart(address, queryMsg)
     }
@@ -56,16 +66,18 @@ export default class AlQuerier extends LitElement {
   }
 
   private async loadRpcs() {
-    if (typeof window === undefined || !window) return
     if (!window.__RPC_CONNECTIONS) window.__RPC_CONNECTIONS = {}
     try {
       // loop all found configs "__RPC_CONFIGS", establish "__RPC_CONNECTIONS", and return smart instance
-      if (window.__RPC_CONFIGS) {
-        await Object.keys(window.__RPC_CONFIGS).forEach(async network => {
-          window.__RPC_CONNECTIONS[network] = await this.getQueryClient(window.__RPC_CONFIGS[network])
-        })
-      }
+      await Object.keys(window.__RPC_CONFIGS).forEach(async network => {
+        window.__RPC_CONNECTIONS[network] = await this.getQueryClient(window.__RPC_CONFIGS[network])
+      })
 
+      // TODO: REMOVE!! JUST FOR TESTING!!!! Add support for rpc network && address attributes
+      window.__RPC_CONNECTIONS.juno = await this.getQueryClient([{
+        address: "https://rpc.uni.juno.deuslabs.fi",
+        provider: "deuslabs"
+      }])
       await this.loadSmartRpc()
 
       emit(this, 'al-querier-loaded')
@@ -74,8 +86,24 @@ export default class AlQuerier extends LitElement {
     }
   }
 
+  constructor() {
+    super()
+
+    if (window.__RPC) return;
+    if (!window.__RPC_CONFIGS) {
+      let i = 0
+      let timer = setInterval(() => {
+        if (!window.__RPC && window.__RPC_CONFIGS) {
+          this.loadRpcs()
+          clearInterval(timer)
+        }
+        if (i > 500) clearInterval(timer)
+        i++
+      }, 40)
+    }
+  }
+
   render() {
-    this.loadRpcs()
     return html`<slot></slot>`;
   }
 }

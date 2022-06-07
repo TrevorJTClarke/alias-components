@@ -46,7 +46,7 @@ export default class AlConfig extends LitElement {
   }
 
   render() {
-    this.loadConfigs()
+    if (!window.__RPC_CONFIGS) this.loadConfigs()
     return html`<slot></slot>`;
   }
 }

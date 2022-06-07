@@ -1,7 +1,7 @@
 {
   "name": "@alias/components",
   "description": "A web3 library of web components.",
-  "version": "2.0.0-beta.73",
+  "version": "1.0.0",
   "license": "MIT",
   "main": "dist/alias.js",
   "module": "dist/alias.js",

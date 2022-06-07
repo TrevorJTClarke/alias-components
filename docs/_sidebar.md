@@ -4,15 +4,15 @@
   - [Installation](/getting-started/installation)
   - [Usage](/getting-started/usage)
   - [Themes](/getting-started/themes)
-  - [Customizing](/getting-started/customizing)
-  - [Localization](/getting-started/localization)
+  <!-- - [Customizing](/getting-started/customizing) -->
+  <!-- - [Localization](/getting-started/localization) -->
 
-- Frameworks
+<!-- - Frameworks
 
   - [React](/frameworks/react)
   - [Vue](/frameworks/vue)
   - [Angular](/frameworks/angular)
-  - [NextJS](/tutorials/integrating-with-nextjs)
+  - [NextJS](/tutorials/integrating-with-nextjs) -->
 
 - Components
 

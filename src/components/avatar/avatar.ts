@@ -1,4 +1,3 @@
-import { CosmWasmClient } from 'cosmwasm/dist/bundle.js'
 import { html, LitElement } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
@@ -6,7 +5,7 @@ import { watch } from '../../internal/watch';
 import styles from './avatar.styles';
 
 /**
- * @since 0.1.0
+ * @since 1.0.0
  * @status stable
  *
  * @csspart base - The component's internal wrapper.
@@ -20,7 +19,6 @@ export default class AlAvatar extends LitElement {
   static styles = styles;
 
   @state() private hasError = false;
-  @state() private rpcClient;
 
   /** The wallet address storing the metadata used for generating image or NFT spec. */
   @property() address = '';
@@ -46,7 +44,7 @@ export default class AlAvatar extends LitElement {
 
   private computeBoxShadow(rgbArray?: Array<number>) {
     if (!this.clientWidth) return;
-    const p = this.renderRoot?.querySelector('.avatar')
+    const p = this.renderRoot?.querySelector('.avatar') as LitElement
     if (!p) return;
     const rand = (min: number, max: number) => Math.floor(Math.random() * (max - min)) + min;
     const pixelSize = 4
@@ -106,28 +104,22 @@ export default class AlAvatar extends LitElement {
     p.style.setProperty('--pixel-box-shadow', shadow.slice(0, shadow.length-1))
   }
 
-  private async getClient() {
-    if (this.rpcClient) return this.rpcClient
-    // return CosmWasmClient.connect('https://rpc-juno.itastakers.com')
-    return CosmWasmClient.connect('https://rpc.stargaze-apis.com/')
-  }
-
-  private async queryRpc(contract, msg) {
-    const client = await this.getClient()
+  private async queryRpc(contract: string, msg: Record<string, unknown>) {
+    if (!window.__RPC || !window.__RPC.query) return;
+    const querier = window.__RPC.query
     try {
-      const q = await client.queryContractSmart(contract, msg);
-      console.log('queryRpc', q);
+      const q = await querier(contract, msg)
+      console.log('queryRpc', q)
       return q;
     } catch (e) {
-      console.log('GET FAILED', e);
+      console.log('GET FAILED', e)
       return;
     }
   }
 
-  private async queryCw20(contract) {
-    const client = await this.getClient()
+  private async queryCw20(contract: string) {
     try {
-      const q = await client.queryContractSmart(contract, { marketing_info: {} });
+      const q = await this.queryRpc(contract, { marketing_info: {} });
       // console.log('queryCw20', q);
       if (q && q.logo && q.logo.url) this.image = q.logo.url
       console.log('q.logo.url', q.logo.url);
@@ -138,11 +130,10 @@ export default class AlAvatar extends LitElement {
   }
 
   // TODO: request token_uri, then resolve to image
-  private async queryCw721(contract, token_id) {
-    const client = await this.getClient()
+  private async queryCw721(contract: string, token_id: string) {
     let uri
     try {
-      const q = await client.queryContractSmart(contract, { nft_info: { token_id } });
+      const q = await this.queryRpc(contract, { nft_info: { token_id } });
       console.log('queryCw721', q);
       if (q && q.token_uri) uri = `https://ipfs.stargaze.zone/ipfs/${q.token_uri}`.replace('ipfs://', '')
     } catch (e) {
@@ -192,6 +183,7 @@ export default class AlAvatar extends LitElement {
   }
 
   updated() {
+    if (this.hasError) this.hasError = false;
     this.reload()
   }
 
